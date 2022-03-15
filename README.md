@@ -12,12 +12,12 @@ docker-compose build salt-with-foreman-proxy
 docker-compose run --rm --entrypoint /usr/share/foreman-proxy/bin/smart-proxy salt-with-foreman-proxy --no-daemonize
 ```
 
-### Reproduce issue
+### Workaround
 
-Comment mount in `docker-compose.yml`
+Uncomment mount in `docker-compose.yml` to fix the database path
 
 ```
-#      - ./etc_master/foreman-proxy/settings.d/dynflow.yml:/etc/foreman-proxy/settings.d/dynflow.ym
+- ./etc_master/foreman-proxy/settings.d/dynflow.yml:/etc/foreman-proxy/settings.d/dynflow.yml
 ```
 
 and run again
