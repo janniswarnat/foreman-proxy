@@ -1,0 +1,49 @@
+version: '3.5'
+services:
+  salt-with-foreman-proxy:
+    image: "janniswarnat/salt-with-foreman-proxy:latest"
+    build: ./build_master
+    ports:
+      - "4505-4506:4505-4506"
+      - "8000:8000"
+      - "9000:9000"
+    volumes:
+      - ./etc_master/foreman-proxy/settings.yml:/etc/foreman-proxy/settings.yml
+      - ./etc_master/foreman-proxy/settings.d/salt.yml:/etc/foreman-proxy/settings.d/salt.yml
+#      - ./etc_master/foreman-proxy/settings.d/dynflow.yml:/etc/foreman-proxy/settings.d/dynflow.yml
+      - ./etc_master/salt/master.d/foreman.conf:/etc/salt/master.d/foreman.conf
+      - ./etc_master/salt/foreman.yaml:/etc/salt/foreman.yaml
+    environment:
+      - SALT_SHARED_SECRET=GCUrcjS8J5wrcdtbWpjV
+      - 'SALT_MASTER_CONFIG={
+                              "log_level": "debug",
+                              "file_roots": {
+                                "base": [
+                                  "/srv/salt/"
+                                ]
+                              },
+                              "pillar_roots": {
+                                "base": [
+                                  "/srv/pillar/"
+                                ]
+                              }
+                            }
+                            '
+      - 'SALT_API_CONFIG={
+                            "rest_cherrypy":{
+                               "port":8000,
+                               "disable_ssl":true
+                            },
+                            "external_auth":{
+                               "sharedsecret":{
+                                  "salt":[
+                                     ".*",
+                                     "@wheel",
+                                     "@jobs",
+                                     "@runner"
+                                  ]
+                               }
+                            },
+                            "sharedsecret":"GCUrcjS8J5wrcdtbWpjV"
+                         }
+                         '
